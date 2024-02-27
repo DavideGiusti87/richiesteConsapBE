@@ -3,6 +3,7 @@ package com.proggettazione.richiesteConsapBE.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -11,17 +12,22 @@ public class Richiesta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    private long idCommessa;
+    private int id;
+    private int idCommessa;
     private String Oggetto;
-    private Date dataCreazione;
+    @ManyToOne
+    @JoinColumn(name = "id_Stato", referencedColumnName = "id")
+    private Stato idStato;
+    private int statoApprovazione;
+    private LocalDateTime dataCreazione;
     private String note;
     private String campo1;
     private String campo2;
     private String campo3;
     private String campo4;
-    private long idUtenteCreazione;
-    private Date dataInserimento;
-    private Date dataModifica;
-    private long idUtenteModifica;
+    private String utenteCreazione;
+    private LocalDateTime dataInserimento;
+    private LocalDateTime dataModifica;
+    private String utenteModifica;
+
 }
