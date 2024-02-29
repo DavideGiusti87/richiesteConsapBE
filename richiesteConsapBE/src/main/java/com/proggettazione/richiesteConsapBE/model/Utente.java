@@ -16,8 +16,8 @@ public class Utente {
     private int id;
     private String username;
     private String password;
-    private String utenteCreazione;
+    private String utenteCreazione; //chi deve creare l'utente?
     private LocalDateTime dataInserimento;
     private LocalDateTime dataModifica;
-    private String utenteModifica ;
+    private String utenteModifica ; //chi può modificare l'utente?
 }

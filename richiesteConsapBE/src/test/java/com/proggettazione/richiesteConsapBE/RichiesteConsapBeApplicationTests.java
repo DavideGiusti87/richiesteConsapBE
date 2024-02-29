@@ -8,6 +8,7 @@ class RichiesteConsapBeApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

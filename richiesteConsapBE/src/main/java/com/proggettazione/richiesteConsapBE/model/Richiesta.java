@@ -18,7 +18,7 @@ public class Richiesta {
     @ManyToOne
     @JoinColumn(name = "id_Stato", referencedColumnName = "id")
     private Stato idStato;
-    private int statoApprovazione;
+    private StatoApprovazione statoApprovazione;
     private LocalDateTime dataCreazione;
     private String note;
     private String campo1;
