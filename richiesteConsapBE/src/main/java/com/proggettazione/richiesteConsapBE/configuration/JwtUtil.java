@@ -17,21 +17,23 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JwtUtil {
+public abstract class JwtUtil {
     private static final int ORE_SCADENZA_TOKEN = 24;
     private static final int ORE_SCADENZA_AGGIORNAMENTO_TOKEN = 72;
     private static final String SEGRETO = "76E9864C6E64027511F7993BA2DA22EAD359D4B8415D7E7FA6EA4C3AA99D9998";
 
     //crea un token con payload contenente:
-    public static String createAccessToken(String username, String emettitore) {
+    public static String createAccessToken(String email, String emettitore, List<String> ruoli) {
         try {
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                    .subject(username)
+                    .subject(email)
                     .issuer(emettitore) //issuer (chi ha richiesto il JWT)
+                    .claim("ruoli", ruoli)
                     .expirationTime(Date.from(Instant.now().plusSeconds(ORE_SCADENZA_TOKEN * 3600))) //expirationTime impostato a 24 ore
                     .issueTime(new Date()) // issueTime, cioè quando è stato creato il token
                     .build();
@@ -84,7 +86,10 @@ public class JwtUtil {
         jwtProcessor.process(signedJWT, null);
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
         String username = claimsSet.getSubject();
-
-        return new UsernamePasswordAuthenticationToken(username, null);
+        /*var ruoli = (List<String>) claimsSet.getClaim("ruoli");
+        var authorities = ruoli == null ? null : ruoli.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());*/
+        return new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()/*, authorities*/);
     }
 }

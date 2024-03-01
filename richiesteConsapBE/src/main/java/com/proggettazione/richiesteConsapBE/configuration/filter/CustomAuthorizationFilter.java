@@ -20,7 +20,9 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
         String token = null;
         if(request.getServletPath().equals("/login") || request.getServletPath().equals("/refreshToken")) {
             filterChain.doFilter(request, response);
@@ -34,10 +36,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                 }
                 catch (Exception e) {
-                    //"Errore token di autenticazione
+                    System.out.println("Errore token di autenticazione");
                     response.setStatus(FORBIDDEN.value());
                     Map<String, String> error = new HashMap<>();
-                    error.put("errorMessage","Errore durante l'autenticazione: " + e.getMessage());
+                    error.put("errorMessage", e.getMessage());
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     new ObjectMapper().writeValue(response.getOutputStream(), error);
                 }

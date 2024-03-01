@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,10 +42,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             Map<String, String> map = objectMapper.readValue(request.getInputStream(), Map.class);
             username = map.get("username");
             password = map.get("password");
+            System.out.println("Accesso effettuato");
             return AUTHENTICATION_MANAGER.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         }
         catch (AuthenticationException e) {
-            //Autenticazione non riuscita per utente
+            System.out.println("Autenticazione non riuscita con username e password");
             throw e;
         }
         catch (Exception e) {
@@ -61,7 +64,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authentication) throws IOException, ServletException {
         User user = (User)authentication.getPrincipal();
-        String accessToken = JwtUtil.createAccessToken(user.getUsername(), request.getRequestURL().toString());
+        String accessToken = JwtUtil.createAccessToken(
+                user.getUsername(),
+                request.getRequestURL().toString(),
+                Collections.emptyList()
+                /*user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())*/);
         String refreshToken = JwtUtil.createRefreshToken(user.getUsername());
         response.addHeader("access_token", accessToken);
         response.addHeader("refresh_token", refreshToken);
@@ -69,7 +76,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> error = new HashMap<>();
