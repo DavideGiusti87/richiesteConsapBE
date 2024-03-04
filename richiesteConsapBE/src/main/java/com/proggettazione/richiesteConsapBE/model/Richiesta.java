@@ -14,12 +14,12 @@ public class Richiesta {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private int idCommessa;
-    private String Oggetto;
+    private String oggetto;
     @ManyToOne
     @JoinColumn(name = "id_Stato", referencedColumnName = "id")
     private Stato idStato;
-    private int statoApprovazione;
     private LocalDateTime dataCreazione;
+    private StatoApprovazione statoApprovazione;
     private String note;
     private String campo1;
     private String campo2;
